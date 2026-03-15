@@ -2,6 +2,8 @@ List tokenizer({required String math}) {
   List tokenizedString = [];
   String number = '';
 
+  math = math.replaceAll(',', '');
+
   for (int i = 0; i < math.length; i++) {
     if (num.tryParse(math[i]) != null || math[i] == '.') {
       number += math[i];

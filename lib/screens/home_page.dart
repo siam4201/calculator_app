@@ -21,6 +21,9 @@ class _HomepageState extends State<Homepage> {
   double buttonSize = 45;
   String math = '';
 
+  bool operatorFlag = false;
+  bool resultFlag = false;
+
   Widget calcButton(
     String text,
     VoidCallback onPressed, {
@@ -62,187 +65,241 @@ class _HomepageState extends State<Homepage> {
   }
 
   void addText(String value) {
-    if (value == "+" ||
-        value == "-" ||
-        value == "×" ||
-        value == "/" ||
-        value == "%") {
+    if (resultFlag) {
+      controller.text = "";
+      controller2.text = "";
+      resultFlag = false;
+    }
+
+    if ((value == "+" ||
+            value == "-" ||
+            value == "×" ||
+            value == "/" ||
+            value == "%") &&
+        operatorFlag) {
       controller.text = controller.text + controller2.text + value;
       controller2.text = '';
-    } else {
+      operatorFlag = false;
+    } else if (double.tryParse(value) != null || value == '.' || value == ',') {
       controller2.text = controller2.text + value;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
         }
+        operatorFlag = true;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            SizedBox(height: 100),
-            TextField(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.black,
-                border: InputBorder.none,
-              ),
-              controller: controller,
-              //textDirection: TextDirection.rtl,
-              textAlign: TextAlign.right,
-              readOnly: true,
-              showCursor: true,
-              cursorColor: AppColors.secondary,
-              style: TextStyle(
-                fontStyle: FontStyle.normal,
-                color: AppColors.gray,
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 50),
-              child: TextField(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              SizedBox(height: 60),
+              TextField(
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.black,
                   border: InputBorder.none,
                 ),
-                controller: controller2,
+                controller: controller,
                 //textDirection: TextDirection.rtl,
                 textAlign: TextAlign.right,
-                keyboardType: TextInputType.none,
-                focusNode: displayFocus,
+                readOnly: true,
                 showCursor: true,
                 cursorColor: AppColors.secondary,
                 style: TextStyle(
                   fontStyle: FontStyle.normal,
-                  color: AppColors.secondary,
+                  color: AppColors.gray,
                   fontSize: 40,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
 
-            Row(
-              children: [
-                calcButton("C", () {
-                  final text = controller2.text;
-                  if (text.isEmpty) return;
-                  final newText = text.substring(0, text.length - 1);
-                  controller2.value = TextEditingValue(
-                    text: newText,
-                    selection: TextSelection.collapsed(offset: newText.length),
-                  );
-                }, background: AppColors.gray),
-                calcButton("CE", () {
-                  controller.text = "";
-                  controller2.text = "";
-                }, background: AppColors.gray),
-                calcButton("%", () {
-                  controller.text += ((double.parse(controller2.text)) / 100)
-                      .toString();
-                  controller2.text = "";
-                }, background: AppColors.gray),
-                calcButton("+", () => addText("+")),
-              ],
-            ),
-            Row(
-              children: [
-                calcButton(
-                  "1",
-                  () => addText("1"),
-                  background: AppColors.lightGray,
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 50),
+                child: TextField(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.black,
+                    border: InputBorder.none,
+                  ),
+                  controller: controller2,
+                  //textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.right,
+                  keyboardType: TextInputType.none,
+                  focusNode: displayFocus,
+                  showCursor: true,
+                  cursorColor: AppColors.secondary,
+                  style: TextStyle(
+                    fontStyle: FontStyle.normal,
+                    color: AppColors.secondary,
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                calcButton(
-                  "2",
-                  () => addText("2"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton(
-                  "3",
-                  () => addText("3"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton("-", () => addText("-")),
-              ],
-            ),
-            Row(
-              children: [
-                calcButton(
-                  "4",
-                  () => addText("4"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton(
-                  "5",
-                  () => addText("5"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton(
-                  "6",
-                  () => addText("6"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton("×", () => addText("×")),
-              ],
-            ),
-            Row(
-              children: [
-                calcButton(
-                  "7",
-                  () => addText("7"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton(
-                  "8",
-                  () => addText("8"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton(
-                  "9",
-                  () => addText("9"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton("/", () => addText("/")),
-              ],
-            ),
-            Row(
-              children: [
-                calcButton(
-                  ".",
-                  () => addText("."),
-                  background: AppColors.lightGray,
-                ),
-                calcButton(
-                  "0",
-                  () => addText("0"),
-                  background: AppColors.lightGray,
-                ),
-                calcButton(
-                  ",",
-                  () => addText(","),
-                  background: AppColors.lightGray,
-                ),
-                calcButton("=", () {
-                  controller.text = controller.text + controller2.text;
-                  String mathtext = controller.text.replaceAll('×', '*');
-                  math = mathtext + ';';
-                  String result = parser(math).toString();
-                  print(result);
-                  controller2.text = result;
-                }),
-              ],
-            ),
-          ],
+              ),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: calcButton("C", () {
+                      final text = controller2.text;
+                      if (text.isEmpty) return;
+                      final newText = text.substring(0, text.length - 1);
+                      controller2.value = TextEditingValue(
+                        text: newText,
+                        selection: TextSelection.collapsed(
+                          offset: newText.length,
+                        ),
+                      );
+                    }, background: AppColors.gray),
+                  ),
+                  Expanded(
+                    child: calcButton("CE", () {
+                      controller.text = "";
+                      controller2.text = "";
+                    }, background: AppColors.gray),
+                  ),
+                  Expanded(
+                    child: calcButton("%", () {
+                      controller.text +=
+                          ((double.parse(controller2.text)) / 100).toString();
+                      controller2.text = "";
+                    }, background: AppColors.gray),
+                  ),
+                  Expanded(child: calcButton("+", () => addText("+"))),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: calcButton(
+                      "1",
+                      () => addText("1"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      "2",
+                      () => addText("2"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      "3",
+                      () => addText("3"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(child: calcButton("-", () => addText("-"))),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: calcButton(
+                      "4",
+                      () => addText("4"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      "5",
+                      () => addText("5"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      "6",
+                      () => addText("6"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(child: calcButton("×", () => addText("×"))),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: calcButton(
+                      "7",
+                      () => addText("7"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      "8",
+                      () => addText("8"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      "9",
+                      () => addText("9"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(child: calcButton("/", () => addText("/"))),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: calcButton(
+                      ".",
+                      () => addText("."),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      "0",
+                      () => addText("0"),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton(
+                      ",",
+                      () => addText(","),
+                      background: AppColors.lightGray,
+                    ),
+                  ),
+                  Expanded(
+                    child: calcButton("=", () {
+                      if (resultFlag) {
+                        controller.text = "";
+                        controller2.text = "";
+                        resultFlag = false;
+                        return;
+                      }
+                      if (operatorFlag) {
+                        controller.text = controller.text + controller2.text;
+                        String mathtext = controller.text.replaceAll('×', '*');
+                        math = mathtext + ';';
+                        String result = (parser(math)).toString();
+
+                        controller2.text = result;
+                        resultFlag = true;
+                      }
+                    }),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
