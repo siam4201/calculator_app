@@ -9,7 +9,7 @@ The app features a clean and modern user interface, mimicking standard calculato
 
 | Start Screen | Input | Result |
 |-------------|------------|---------------|
-| <img src="assets/Screenshot_1773596913.png" width="200"/> | <img src="assets/Screenshot_1773596902.png" width="200"/> | <img src="assets/Screenshot_1773596898.png" width="200"/> |
+| <img src="assets/Screenshot_1773596898.png" width="200"/>  | <img src="assets/Screenshot_1773596902.png" width="200"/> | <img src="assets/Screenshot_1773596913.png" width="200"/> |
 
 ---
 
