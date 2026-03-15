@@ -11,7 +11,7 @@ List tokenizer({required String math}) {
     }
 
     if (math[i + 1] != ';') {
-      if (num.tryParse(math[i + 1]) == null) {
+      if (num.tryParse(math[i + 1]) == null && math[i + 1] != '.') {
         tokenizedString.add(number);
         number = '';
         continue;
